@@ -1,0 +1,1 @@
+export * from "./modules/user/resolvers/User.resolver"
