@@ -1,52 +1,13 @@
 import argon2 from "argon2";
-import {
-	Arg,
-	Ctx,
-	Field,
-	InputType,
-	Mutation,
-	ObjectType,
-	Query,
-	Resolver,
-} from "type-graphql";
+import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { User } from "../models/User";
 import jwt from "jsonwebtoken";
-
-@InputType()
-class RegisterUserInput {
-	@Field()
-	username!: string;
-	@Field()
-	email!: string;
-	@Field()
-	password!: string;
-}
-
-@InputType()
-class LoginUserInput {
-	@Field()
-	emailOrUserName!: string;
-	@Field()
-	password!: string;
-}
-
-@ObjectType()
-class UserResponse {
-	@Field(() => [FieldError], { nullable: true })
-	errors?: FieldError[];
-	@Field(() => User, { nullable: true })
-	user?: User;
-	@Field(() => String, { nullable: true })
-	token?: string;
-}
-
-@ObjectType()
-class FieldError {
-	@Field(() => String, { nullable: true })
-	message?: string;
-	@Field(() => String, { nullable: true })
-	field?: string;
-}
+import { ContextType } from "src/modules/common/types/Context.type";
+import {
+	LoginUserInput,
+	RegisterUserInput,
+	UserResponse,
+} from "../types/user.type";
 
 @Resolver()
 export class UserResolver {
@@ -90,13 +51,11 @@ export class UserResolver {
 		}
 		const token = jwt.sign(
 			{ id: user.id, email: user.email },
-			"efefefwgrwgsdf",
+			process.env.SECRET_KEY as string,
 			{
 				expiresIn: "7d",
 			}
 		);
-		// console.log(token)
-		// TODO set jwt token
 		return {
 			user,
 			token,
@@ -134,21 +93,20 @@ export class UserResolver {
 		}
 		const token = jwt.sign(
 			{ id: user.id, email: user.email },
-			"efefefwgrwgsdf",
+			process.env.SECRET_KEY as string,
 			{
 				expiresIn: "7d",
 			}
 		);
-		// TODO set jwt token
 		return {
 			user,
 			token,
 		};
 	}
 
-	@Query(() => String)
-	async me(@Ctx() ctx: any) {
-		console.log("cts", ctx.user);
-		return "test";
+	@Authorized()
+	@Query(() => User, { nullable: true })
+	async me(@Ctx() ctx: ContextType): Promise<User | undefined> {
+		return await User.findOne({ where: { email: ctx.user.email } });
 	}
 }
