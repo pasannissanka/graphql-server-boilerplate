@@ -1,11 +1,7 @@
 {
     "compilerOptions": {
-        "target": "es2018",
+        "target": "es5",
         "module": "commonjs",
-        "lib": [
-            "es2018",
-            "esnext.asynciterable"
-        ],
         // "sourceMap": true,
         "outDir": "./dist",
         "rootDir": "./src",
@@ -18,7 +14,9 @@
         "emitDecoratorMetadata": true,
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
-        "resolveJsonModule": true
+        "resolveJsonModule": true,
+        "strictPropertyInitialization": false,
+        "moduleResolution": "node"
     },
     "exclude": [
         "./node_modules"

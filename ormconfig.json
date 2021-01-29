@@ -1,6 +1,10 @@
 {
-    "type": "sqlite",
-    "database": "./src/database.sqlite3",
+    "type": "postgres",
+    "host": "localhost",
+    "port": 5432,
+    "username": "pasannissanka",
+    "password": "1991",
+    "database": "gql_auth_test",
     "entities": [
         "./src/modules/**/models/**/*.ts"
     ],
