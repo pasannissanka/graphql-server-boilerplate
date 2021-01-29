@@ -1,6 +1,7 @@
 import argon2 from "argon2";
 import {
 	Arg,
+	Ctx,
 	Field,
 	InputType,
 	Mutation,
@@ -9,6 +10,7 @@ import {
 	Resolver,
 } from "type-graphql";
 import { User } from "../models/User";
+import jwt from "jsonwebtoken";
 
 @InputType()
 class RegisterUserInput {
@@ -34,6 +36,8 @@ class UserResponse {
 	errors?: FieldError[];
 	@Field(() => User, { nullable: true })
 	user?: User;
+	@Field(() => String, { nullable: true })
+	token?: string;
 }
 
 @ObjectType()
@@ -83,10 +87,19 @@ export class UserResolver {
 					},
 				],
 			};
-        }
-        // TODO set jwt token
+		}
+		const token = jwt.sign(
+			{ id: user.id, email: user.email },
+			"efefefwgrwgsdf",
+			{
+				expiresIn: "7d",
+			}
+		);
+		// console.log(token)
+		// TODO set jwt token
 		return {
 			user,
+			token,
 		};
 	}
 
@@ -118,10 +131,24 @@ export class UserResolver {
 					},
 				],
 			};
-        }
-        // TODO set jwt token
+		}
+		const token = jwt.sign(
+			{ id: user.id, email: user.email },
+			"efefefwgrwgsdf",
+			{
+				expiresIn: "7d",
+			}
+		);
+		// TODO set jwt token
 		return {
 			user,
+			token,
 		};
+	}
+
+	@Query(() => String)
+	async me(@Ctx() ctx: any) {
+		console.log("cts", ctx.user);
+		return "test";
 	}
 }
