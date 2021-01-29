@@ -5,7 +5,6 @@ export interface ContextType {
     user: UserDecoded
 }
 
-
 export interface UserDecoded {
     email: string,
     id: number,

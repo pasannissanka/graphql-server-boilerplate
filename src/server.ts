@@ -1,11 +1,12 @@
-import "reflect-metadata";
 require('dotenv').config();
-import { ApolloServer } from "apollo-server-express";
-import { buildSchema, Resolver } from "type-graphql";
-import { PostResolver, UserResolver } from "./resolvers";
-import express, { NextFunction, Response, Request, Errback } from "express";
+import "reflect-metadata";
+import express from "express";
 import * as jwt from "express-jwt";
+import { ApolloServer } from "apollo-server-express";
+import { buildSchema } from "type-graphql";
 import { createConnection } from "typeorm";
+
+import { PostResolver, UserResolver } from "./resolvers";
 import { customAuthChecker } from "./modules/common/authChecker";
 import { ContextType } from "./modules/common/types/Context.type";
 
@@ -27,13 +28,14 @@ const main = async () => {
 		context: ({ req }) => {
 			const context: ContextType = {
 				req,
-				user: (req as any).user, // `req.user` comes from `express-jwt`
+				user: (req as any).user,
 			};
 			return context;
 		},
+		debug: process.env.NODE_ENV !== 'production'
 	});
 
-	app.get("/", (req, res) => {
+	app.get("/", (_, res) => {
 		res.send("Hi");
 	});
 
@@ -48,9 +50,6 @@ const main = async () => {
 
 	apolloServer.applyMiddleware({ app, path: PATH });
 
-	app.use((err: any, _: Request, res: Response, __: NextFunction) => {
-		res.status(err.status).json(err);
-	});
 
 	app.listen(PORT, () => {
 		console.log(`🚀 Server started at http://localhost:${PORT}`);

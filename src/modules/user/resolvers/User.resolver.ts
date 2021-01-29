@@ -2,7 +2,7 @@ import argon2 from "argon2";
 import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { User } from "../models/User";
 import jwt from "jsonwebtoken";
-import { ContextType } from "src/modules/common/types/Context.type";
+import { ContextType } from "../../common/types/Context.type";
 import {
 	LoginUserInput,
 	RegisterUserInput,

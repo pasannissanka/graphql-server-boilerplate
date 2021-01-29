@@ -1,4 +1,4 @@
-import { Arg, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Authorized, Mutation, Query, Resolver } from "type-graphql";
 import { Post } from "../models/post";
 
 @Resolver()
@@ -8,10 +8,11 @@ export class PostResolver {
 		return await Post.find({});
 	}
 
+	@Authorized()
 	@Mutation(() => Post)
 	async createPost(
 		@Arg("title") title: string,
-		@Arg("contnent") content: string
+		@Arg("content") content: string
 	): Promise<Post> {
 		const post = Post.create({ content, title });
 		try {
